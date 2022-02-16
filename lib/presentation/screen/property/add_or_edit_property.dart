@@ -243,7 +243,7 @@ class _AddOrEditPropertyPageState extends State<AddOrEditPropertyPage> {
                           formIsDirty = true;
                         });
                       }, (_) async {
-                        if (images.isEmpty) {
+                        if (images.isEmpty && !isEdit) {
                           setState(() {
                             formIsDirty = true;
                           });
@@ -279,14 +279,14 @@ class _AddOrEditPropertyPageState extends State<AddOrEditPropertyPage> {
                           failureOrSuccess.fold(
                               (failure) => ScaffoldMessenger.of(context)
                                       .showSnackBar(SnackBar(
-                                    content: Text(failure.msg),
+                                    content: Text(failure),
                                     backgroundColor: AppColors.kError,
                                   )), (_) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content:
                                     const Text('Property listed successfully'),
-                                backgroundColor: AppColors.kError,
+                                backgroundColor: AppColors.kPrimary,
                               ),
                             );
                             context.pop();

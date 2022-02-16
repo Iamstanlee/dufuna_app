@@ -29,7 +29,6 @@ class _HomePageState extends State<HomePage> {
           style: context.textTheme.subtitle1!.copyWith(
             color: AppColors.kDark,
             fontSize: FontSizes.s20,
-            fontWeight: FontWeight.bold,
           ),
         ),
         actions: [

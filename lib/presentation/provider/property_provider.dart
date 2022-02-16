@@ -46,7 +46,7 @@ class PropertyProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Either<Failure, Unit>> uploadProp(Property property,
+  Future<Either<String, Unit>> uploadProp(Property property,
       [List<File> images = const []]) async {
     List<PropertyImg> uploadedImgs = [];
 
@@ -55,7 +55,7 @@ class PropertyProvider with ChangeNotifier {
     for (var image in images) {
       final failureOrPropImg = await _propertyRepository.uploadPropImg(image);
       failureOrPropImg.fold((failure) {
-        return Left(failure);
+        return Left(failure.msg);
       }, (img) {
         uploadedImgs.add(img);
       });
@@ -66,7 +66,7 @@ class PropertyProvider with ChangeNotifier {
         images.isEmpty ? property : property.copyWith(images: uploadedImgs));
     failureOrProp.fold(
       (failure) {
-        return Left(failure);
+        return Left(failure.msg);
       },
       (prop) => asyncValueOfProps =
           AsyncValue.done([prop, ...asyncValueOfProps.data!]),
