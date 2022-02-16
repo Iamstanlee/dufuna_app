@@ -57,7 +57,8 @@ class _AddOrEditPropertyPageState extends State<AddOrEditPropertyPage> {
     numOfKitchen = widget.property?.toilet ?? numOfKitchens.first;
     numOfBathroom = widget.property?.toilet ?? numOfBathrooms.first;
     validFrom = widget.property?.validFrom.toDateTime() ?? DateTime.now();
-    validTo = widget.property?.validTo.toDateTime() ?? DateTime.now();
+    validTo = widget.property?.validTo.toDateTime() ??
+        validFrom.add(const Duration(days: 1));
     super.initState();
   }
 
