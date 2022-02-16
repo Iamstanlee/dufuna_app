@@ -61,7 +61,7 @@ class PropertyRemoteDataSource implements IPropertyRemoteDataSource {
           update ? '$kPropEndpoint/${property.uid}' : kPropEndpoint;
       final response = await _http.post(
         endpoint,
-        property.toJson(),
+        property.toJson(), // call property.getNeedEditFields()
         usePatch: update,
       ) as Map<String, dynamic>;
       return Property.fromMap(response['data']);

@@ -3,7 +3,7 @@ import 'dart:convert';
 class PropertyImg {
   final int size;
   final String path;
-  final String originalName;
+  final String originalname;
   final String fieldname;
   final String encoding;
   final String mimetype;
@@ -11,7 +11,7 @@ class PropertyImg {
   PropertyImg({
     required this.size,
     required this.path,
-    required this.originalName,
+    required this.originalname,
     required this.fieldname,
     required this.encoding,
     required this.mimetype,
@@ -21,7 +21,7 @@ class PropertyImg {
   PropertyImg copyWith({
     int? size,
     String? path,
-    String? originalName,
+    String? originalname,
     String? fieldname,
     String? encoding,
     String? mimetype,
@@ -30,7 +30,7 @@ class PropertyImg {
     return PropertyImg(
       size: size ?? this.size,
       path: path ?? this.path,
-      originalName: originalName ?? this.originalName,
+      originalname: originalname ?? this.originalname,
       fieldname: fieldname ?? this.fieldname,
       encoding: encoding ?? this.encoding,
       mimetype: mimetype ?? this.mimetype,
@@ -42,7 +42,7 @@ class PropertyImg {
     return {
       'size': size,
       'path': path,
-      'originalname': originalName,
+      'originalname': originalname,
       'fieldname': fieldname,
       'encoding': encoding,
       'mimetype': mimetype,
@@ -54,7 +54,7 @@ class PropertyImg {
     return PropertyImg(
       size: map['size']?.toInt() ?? 0,
       path: map['path'] ?? '',
-      originalName: map['originalName'] ?? '',
+      originalname: map['originalname'] ?? '',
       fieldname: map['fieldname'] ?? '',
       encoding: map['encoding'] ?? '',
       mimetype: map['mimetype'] ?? '',
@@ -69,7 +69,7 @@ class PropertyImg {
 
   @override
   String toString() {
-    return 'PropertyImg(size: $size, path: $path, originalName: $originalName, fieldname: $fieldname, encoding: $encoding, mimetype: $mimetype, filename: $filename)';
+    return 'PropertyImg(size: $size, path: $path, originalname: $originalname, fieldname: $fieldname, encoding: $encoding, mimetype: $mimetype, filename: $filename)';
   }
 
   @override
@@ -79,7 +79,7 @@ class PropertyImg {
     return other is PropertyImg &&
         other.size == size &&
         other.path == path &&
-        other.originalName == originalName &&
+        other.originalname == originalname &&
         other.fieldname == fieldname &&
         other.encoding == encoding &&
         other.mimetype == mimetype &&
@@ -90,7 +90,7 @@ class PropertyImg {
   int get hashCode {
     return size.hashCode ^
         path.hashCode ^
-        originalName.hashCode ^
+        originalname.hashCode ^
         fieldname.hashCode ^
         encoding.hashCode ^
         mimetype.hashCode ^
@@ -189,21 +189,18 @@ class Property {
 
   Map<String, dynamic> toMap() {
     return {
-      '_id': uid,
       'address': address,
       'type': type,
       'bedroom': bedRoom,
       'kitchen': kitchen,
       'sittingRoom': sittingRoom,
-      'bathRoom': bathRoom,
+      'bathroom': bathRoom,
       'toilet': toilet,
       'propertyOwner': owner,
       'description': desc,
       'validFrom': validFrom,
       'validTo': validTo,
       'images': images.map((x) => x.toMap()).toList(),
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
     };
   }
 
@@ -212,9 +209,9 @@ class Property {
       uid: map['_id'] ?? '',
       address: map['address'] ?? '',
       type: map['type'] ?? '',
-      bedRoom: map['“bedroom”']?.toInt() ?? 0,
+      bedRoom: map['bedroom']?.toInt() ?? 0,
       sittingRoom: map['sittingRoom']?.toInt() ?? 0,
-      bathRoom: map['bathRoom']?.toInt() ?? 0,
+      bathRoom: map['bathroom']?.toInt() ?? 0,
       toilet: map['toilet']?.toInt() ?? 0,
       kitchen: map['kitchen']?.toInt() ?? 0,
       owner: map['propertyOwner'] ?? '',
@@ -232,9 +229,4 @@ class Property {
 
   factory Property.fromJson(String source) =>
       Property.fromMap(json.decode(source));
-
-  @override
-  String toString() {
-    return 'Property(uid: $uid, address: $address, type: $type, bedRoom: $bedRoom, sittingRoom: $sittingRoom, bathRoom: $bathRoom, kitchen: $kitchen, toilet: $toilet, owner: $owner, desc: $desc, validFrom: $validFrom, validTo: $validTo, images: $images, createdAt: $createdAt, updatedAt: $updatedAt)';
-  }
 }

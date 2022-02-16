@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -15,14 +16,18 @@ class Http {
 
   Future get(String endpoint, [Map<String, dynamic>? params]) async {
     try {
-      final response = await _dio.get(endpoint, queryParameters: params);
+      final response = await _dio
+          .get(endpoint, queryParameters: params)
+          .timeout(const Duration(seconds: 12));
       if (response.statusCode == HttpStatus.ok) {
         return response.data;
       }
-      throw ServerException(
-          "${response.statusCode}: ${response.statusMessage}");
-    } catch (e) {
-      throw ServerException(e.toString());
+      throw "${response.statusCode}: ${response.data['error']['message']}";
+    } on DioError catch (e) {
+      if (e.response != null) {
+        throw ServerException(e.response!.data['error']['message']);
+      }
+      throw ServerException(e.message);
     }
   }
 
@@ -45,8 +50,6 @@ class Http {
           )
         });
       }
-      print(endpoint);
-      print(_data);
       Response response;
       if (usePatch) {
         response = await _dio.patch(endpoint, data: _data);
@@ -57,9 +60,11 @@ class Http {
           response.statusCode == HttpStatus.created) {
         return response.data;
       }
-      throw "${response.statusCode}: ${response.statusMessage}";
-    } catch (e) {
-      throw ServerException(e.toString());
+    } on DioError catch (e) {
+      if (e.response != null) {
+        throw ServerException(e.response!.data['error']['message']);
+      }
+      throw ServerException(e.message);
     }
   }
 }

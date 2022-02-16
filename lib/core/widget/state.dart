@@ -22,19 +22,21 @@ class NoDataOrError extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            height: 64,
-            width: 64,
-            decoration: BoxDecoration(
-              borderRadius: Corners.mdBorder,
-              color: color.withOpacity(0.2),
-            ),
-            child: Icon(
-              variant == Variant.noData
-                  ? PhosphorIcons.rocketFill
-                  : PhosphorIcons.finnTheHumanFill,
-              color: color,
-              size: IconSizes.lg,
+          Center(
+            child: Container(
+              height: 64,
+              width: 64,
+              decoration: BoxDecoration(
+                borderRadius: Corners.mdBorder,
+                color: color.withOpacity(0.2),
+              ),
+              child: Icon(
+                variant == Variant.noData
+                    ? PhosphorIcons.rocketFill
+                    : PhosphorIcons.finnTheHumanFill,
+                color: color,
+                size: IconSizes.lg,
+              ),
             ),
           ),
           Gap.md,

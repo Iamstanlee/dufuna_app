@@ -251,14 +251,10 @@ class _AddOrEditPropertyPageState extends State<AddOrEditPropertyPage> {
                           setState(() {
                             formIsDirty = false;
                           });
-                          final thisInstant = DateTime.now().toIso8601String();
                           final failureOrSuccess = await context
                               .read<PropertyProvider>()
                               .uploadProp(
                                 prop.copyWith(
-                                  uid: DateTime.now()
-                                      .microsecondsSinceEpoch
-                                      .toString(),
                                   type: type,
                                   sittingRoom: numOfSittingroom,
                                   bedRoom: numOfBedroom,
@@ -269,19 +265,19 @@ class _AddOrEditPropertyPageState extends State<AddOrEditPropertyPage> {
                                       dateFormatter.datetimeToString(validFrom),
                                   validTo:
                                       dateFormatter.datetimeToString(validTo),
-                                  createdAt:
-                                      isEdit ? prop.createdAt : thisInstant,
-                                  updatedAt: thisInstant,
                                 ),
+                                isEdit,
                                 images,
                               );
 
                           failureOrSuccess.fold(
-                              (failure) => ScaffoldMessenger.of(context)
-                                      .showSnackBar(SnackBar(
-                                    content: Text(failure),
-                                    backgroundColor: AppColors.kError,
-                                  )), (_) {
+                              (failure) =>
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(failure),
+                                      backgroundColor: AppColors.kError,
+                                    ),
+                                  ), (_) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content:
@@ -454,6 +450,8 @@ class _DateSelectionFieldState extends State<DateSelectionField> {
                     Expanded(
                       child: CupertinoDatePicker(
                         mode: CupertinoDatePickerMode.date,
+                        minimumDate:
+                            widget.value.subtract(const Duration(days: 1)),
                         initialDateTime: widget.value,
                         onDateTimeChanged: (value) => date = value,
                       ),

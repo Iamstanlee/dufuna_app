@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:dartz/dartz.dart';
-import 'package:dufuna/core/failure/failure.dart';
 import 'package:dufuna/core/model/property.dart';
 import 'package:dufuna/core/util/async_value.dart';
 import 'package:dufuna/repository/property_repository.dart';
@@ -27,7 +25,7 @@ class PropertyProvider with ChangeNotifier {
     asyncValueOfProps = kAsyncValueLoading;
     final failureOrProps = await _propertyRepository.getProps(filter);
     failureOrProps.fold(
-      (failure) => AsyncValue.error(failure.msg),
+      (failure) => asyncValueOfProps = AsyncValue.error(failure.msg),
       (props) {
         // remove props with no image
         asyncValueOfProps = AsyncValue.done(props.fold([], (result, prop) {
@@ -47,30 +45,45 @@ class PropertyProvider with ChangeNotifier {
   }
 
   Future<Either<String, Unit>> uploadProp(Property property,
-      [List<File> images = const []]) async {
+      [bool isEdit = false, List<File> images = const []]) async {
     List<PropertyImg> uploadedImgs = [];
 
-    asyncValueOfUpload = AsyncValue.loading('Processing images...');
+    if (!isEdit) {
+      asyncValueOfUpload = AsyncValue.loading('Processing images...');
 
-    for (var image in images) {
-      final failureOrPropImg = await _propertyRepository.uploadPropImg(image);
-      failureOrPropImg.fold((failure) {
-        return Left(failure.msg);
-      }, (img) {
-        uploadedImgs.add(img);
-      });
+      for (var image in images) {
+        final failureOrPropImg = await _propertyRepository.uploadPropImg(image);
+        failureOrPropImg.fold((failure) => null, (img) {
+          uploadedImgs.add(img);
+        });
+      }
     }
 
-    asyncValueOfUpload = AsyncValue.loading('Listing property...');
+    asyncValueOfUpload = AsyncValue.loading(
+        isEdit ? 'Updating property...' : 'Listing property...');
     final failureOrProp = await _propertyRepository.uploadProp(
-        images.isEmpty ? property : property.copyWith(images: uploadedImgs));
-    failureOrProp.fold(
+      images.isEmpty || isEdit
+          ? property
+          : property.copyWith(images: uploadedImgs),
+      update: isEdit,
+    );
+    asyncValueOfUpload = null;
+    return failureOrProp.fold(
       (failure) {
         return Left(failure.msg);
       },
-      (prop) => asyncValueOfProps =
-          AsyncValue.done([prop, ...asyncValueOfProps.data!]),
+      (prop) {
+        if (isEdit) {
+          asyncValueOfProps = AsyncValue.done(asyncValueOfProps.data!.map((e) {
+            if (e == prop) return prop;
+            return e;
+          }).toList());
+        } else {
+          asyncValueOfProps =
+              AsyncValue.done([prop, ...asyncValueOfProps.data!]);
+        }
+        return const Right(unit);
+      },
     );
-    return const Right(unit);
   }
 }
