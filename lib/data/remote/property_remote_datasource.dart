@@ -46,8 +46,8 @@ class PropertyRemoteDataSource implements IPropertyRemoteDataSource {
       final response = await _http.post("/v1/lekki/upload", img, isFile: true)
           as Map<String, dynamic>;
       return PropertyImg.fromMap(response['data']);
-    } catch (e) {
-      throw ServerException(e.toString());
+    } on ServerException catch (e) {
+      throw ServerException(e.msg);
     }
   }
 
@@ -61,12 +61,12 @@ class PropertyRemoteDataSource implements IPropertyRemoteDataSource {
           update ? '$kPropEndpoint/${property.uid}' : kPropEndpoint;
       final response = await _http.post(
         endpoint,
-        property.toMap(),
+        property.toJson(),
         usePatch: update,
       ) as Map<String, dynamic>;
       return Property.fromMap(response['data']);
-    } catch (e) {
-      throw ServerException(e.toString());
+    } on ServerException catch (e) {
+      throw ServerException(e.msg);
     }
   }
 }

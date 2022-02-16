@@ -1,4 +1,5 @@
 import 'package:dufuna/config/constants.dart';
+import 'package:dufuna/config/theme.dart';
 import 'package:dufuna/core/util/extension.dart';
 import 'package:flutter/material.dart';
 
@@ -27,11 +28,14 @@ class LoadingOverlay extends StatelessWidget {
                 CircularProgressIndicator(
                   color: AppColors.kPrimary,
                 ),
-                Text(
-                  msg,
-                  style: context.textTheme.bodyMedium!.copyWith(
-                    fontStyle: FontStyle.italic,
-                    color: Colors.white,
+                Padding(
+                  padding: const EdgeInsets.only(top: Insets.sm),
+                  child: Text(
+                    msg,
+                    style: context.textTheme.bodyMedium!.copyWith(
+                      fontStyle: FontStyle.italic,
+                      color: Colors.white,
+                    ),
                   ),
                 )
               ],

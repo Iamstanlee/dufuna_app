@@ -34,7 +34,7 @@ List<int> numOfKitchens = List.generate(3, (index) => ++index);
 List<int> numOfBathrooms = List.generate(4, (index) => ++index);
 
 class _AddOrEditPropertyPageState extends State<AddOrEditPropertyPage> {
-  final _formKey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
   final DateFormatter dateFormatter = DateFormatter('yyyy-MM-dd');
   bool formIsDirty = false;
   List<File> images = [];
@@ -66,8 +66,9 @@ class _AddOrEditPropertyPageState extends State<AddOrEditPropertyPage> {
     final bool isEdit = widget.property != null;
     final uploading = context.watch<PropertyProvider>().asyncValueOfUpload;
     return LoadingOverlay(
-      busy: uploading.status == AsyncValueStatus.loading,
-      msg: uploading.message!,
+      busy: uploading?.status != null &&
+          uploading?.status == AsyncValueStatus.loading,
+      msg: uploading?.message ?? '',
       child: Scaffold(
         appBar: AppBar(
           title: Text(
@@ -83,7 +84,7 @@ class _AddOrEditPropertyPageState extends State<AddOrEditPropertyPage> {
         ),
         body: SingleChildScrollView(
           child: Form(
-            key: _formKey,
+            key: formKey,
             child: Column(
               children: [
                 Gap.md,
@@ -236,7 +237,7 @@ class _AddOrEditPropertyPageState extends State<AddOrEditPropertyPage> {
                   child: Button(
                     isEdit ? 'EDIT PROPERTY' : 'ADD PROPERTY',
                     onTap: () {
-                      final failureOrValid = InputUtils.validateForm(_formKey);
+                      final failureOrValid = InputUtils.validateForm(formKey);
                       failureOrValid.fold((failure) {
                         setState(() {
                           formIsDirty = true;
@@ -251,7 +252,9 @@ class _AddOrEditPropertyPageState extends State<AddOrEditPropertyPage> {
                             formIsDirty = false;
                           });
                           final thisInstant = DateTime.now().toIso8601String();
-                          context.read<PropertyProvider>().uploadProp(
+                          final failureOrSuccess = await context
+                              .read<PropertyProvider>()
+                              .uploadProp(
                                 prop.copyWith(
                                   uid: DateTime.now()
                                       .microsecondsSinceEpoch
@@ -272,6 +275,22 @@ class _AddOrEditPropertyPageState extends State<AddOrEditPropertyPage> {
                                 ),
                                 images,
                               );
+
+                          failureOrSuccess.fold(
+                              (failure) => ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    content: Text(failure.msg),
+                                    backgroundColor: AppColors.kError,
+                                  )), (_) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content:
+                                    const Text('Property listed successfully'),
+                                backgroundColor: AppColors.kError,
+                              ),
+                            );
+                            context.pop();
+                          });
                         }
                       });
                     },

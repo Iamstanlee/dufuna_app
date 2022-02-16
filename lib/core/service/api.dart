@@ -45,17 +45,19 @@ class Http {
           )
         });
       }
+      print(endpoint);
+      print(_data);
       Response response;
       if (usePatch) {
         response = await _dio.patch(endpoint, data: _data);
       } else {
         response = await _dio.post(endpoint, data: _data);
       }
-      if (response.statusCode == HttpStatus.ok) {
+      if (response.statusCode == HttpStatus.ok ||
+          response.statusCode == HttpStatus.created) {
         return response.data;
       }
-      throw ServerException(
-          "${response.statusCode}: ${response.statusMessage}");
+      throw "${response.statusCode}: ${response.statusMessage}";
     } catch (e) {
       throw ServerException(e.toString());
     }

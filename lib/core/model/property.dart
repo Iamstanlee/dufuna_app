@@ -4,21 +4,37 @@ class PropertyImg {
   final int size;
   final String path;
   final String originalName;
+  final String fieldname;
+  final String encoding;
+  final String mimetype;
+  final String filename;
   PropertyImg({
     required this.size,
     required this.path,
     required this.originalName,
+    required this.fieldname,
+    required this.encoding,
+    required this.mimetype,
+    required this.filename,
   });
 
   PropertyImg copyWith({
     int? size,
     String? path,
     String? originalName,
+    String? fieldname,
+    String? encoding,
+    String? mimetype,
+    String? filename,
   }) {
     return PropertyImg(
       size: size ?? this.size,
       path: path ?? this.path,
       originalName: originalName ?? this.originalName,
+      fieldname: fieldname ?? this.fieldname,
+      encoding: encoding ?? this.encoding,
+      mimetype: mimetype ?? this.mimetype,
+      filename: filename ?? this.filename,
     );
   }
 
@@ -27,6 +43,10 @@ class PropertyImg {
       'size': size,
       'path': path,
       'originalname': originalName,
+      'fieldname': fieldname,
+      'encoding': encoding,
+      'mimetype': mimetype,
+      'filename': filename,
     };
   }
 
@@ -34,7 +54,11 @@ class PropertyImg {
     return PropertyImg(
       size: map['size']?.toInt() ?? 0,
       path: map['path'] ?? '',
-      originalName: map['originalname'] ?? '',
+      originalName: map['originalName'] ?? '',
+      fieldname: map['fieldname'] ?? '',
+      encoding: map['encoding'] ?? '',
+      mimetype: map['mimetype'] ?? '',
+      filename: map['filename'] ?? '',
     );
   }
 
@@ -44,8 +68,9 @@ class PropertyImg {
       PropertyImg.fromMap(json.decode(source));
 
   @override
-  String toString() =>
-      'PropertyImg(size: $size, path: $path, originalName: $originalName)';
+  String toString() {
+    return 'PropertyImg(size: $size, path: $path, originalName: $originalName, fieldname: $fieldname, encoding: $encoding, mimetype: $mimetype, filename: $filename)';
+  }
 
   @override
   bool operator ==(Object other) {
@@ -54,11 +79,23 @@ class PropertyImg {
     return other is PropertyImg &&
         other.size == size &&
         other.path == path &&
-        other.originalName == originalName;
+        other.originalName == originalName &&
+        other.fieldname == fieldname &&
+        other.encoding == encoding &&
+        other.mimetype == mimetype &&
+        other.filename == filename;
   }
 
   @override
-  int get hashCode => size.hashCode ^ path.hashCode ^ originalName.hashCode;
+  int get hashCode {
+    return size.hashCode ^
+        path.hashCode ^
+        originalName.hashCode ^
+        fieldname.hashCode ^
+        encoding.hashCode ^
+        mimetype.hashCode ^
+        filename.hashCode;
+  }
 }
 
 class Property {

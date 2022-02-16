@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:dartz/dartz.dart';
+import 'package:dufuna/core/failure/failure.dart';
 import 'package:dufuna/core/model/property.dart';
 import 'package:dufuna/core/util/async_value.dart';
 import 'package:dufuna/repository/property_repository.dart';
@@ -36,31 +38,39 @@ class PropertyProvider with ChangeNotifier {
     );
   }
 
-  late AsyncValue<Property> _asyncValueOfUpload;
+  AsyncValue<Property>? _asyncValueOfUpload;
 
-  AsyncValue<Property> get asyncValueOfUpload => _asyncValueOfUpload;
-  set asyncValueOfUpload(AsyncValue<Property> value) {
+  AsyncValue<Property>? get asyncValueOfUpload => _asyncValueOfUpload;
+  set asyncValueOfUpload(AsyncValue<Property>? value) {
     _asyncValueOfUpload = value;
     notifyListeners();
   }
 
-  void uploadProp(Property property, [List<File> images = const []]) async {
+  Future<Either<Failure, Unit>> uploadProp(Property property,
+      [List<File> images = const []]) async {
     List<PropertyImg> uploadedImgs = [];
 
     asyncValueOfUpload = AsyncValue.loading('Processing images...');
 
     for (var image in images) {
       final failureOrPropImg = await _propertyRepository.uploadPropImg(image);
-      failureOrPropImg.fold((failure) {}, (img) => uploadedImgs.add(img));
+      failureOrPropImg.fold((failure) {
+        return Left(failure);
+      }, (img) {
+        uploadedImgs.add(img);
+      });
     }
 
     asyncValueOfUpload = AsyncValue.loading('Listing property...');
     final failureOrProp = await _propertyRepository.uploadProp(
         images.isEmpty ? property : property.copyWith(images: uploadedImgs));
     failureOrProp.fold(
-      (failure) => asyncValueOfUpload = AsyncValue.error(failure.msg),
+      (failure) {
+        return Left(failure);
+      },
       (prop) => asyncValueOfProps =
           AsyncValue.done([prop, ...asyncValueOfProps.data!]),
     );
+    return const Right(unit);
   }
 }

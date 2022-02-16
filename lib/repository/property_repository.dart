@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:dufuna/core/failure/exception.dart';
 import 'package:dufuna/core/failure/failure.dart';
 import 'package:dufuna/core/model/property.dart';
 import 'package:dufuna/core/service/network_notifier.dart';
@@ -24,7 +25,7 @@ class PropertyRepository {
         final props = await _propertyRemoteDataSource.getProps(filter);
         return Right(props);
       } catch (e) {
-        return Left(ServerFailure(e.toString()));
+        return Left(ServerFailure((e as ServerException).msg ?? ''));
       }
     }
     return Left(NetworkFailure());
@@ -36,7 +37,7 @@ class PropertyRepository {
         final prop = await _propertyRemoteDataSource.getPropById(uid);
         return Right(prop);
       } catch (e) {
-        return Left(ServerFailure(e.toString()));
+        return Left(ServerFailure((e as ServerException).msg ?? ''));
       }
     }
     return Left(NetworkFailure());
@@ -48,7 +49,7 @@ class PropertyRepository {
         final prop = await _propertyRemoteDataSource.uploadPropImage(file);
         return Right(prop);
       } catch (e) {
-        return Left(ServerFailure(e.toString()));
+        return Left(ServerFailure((e as ServerException).msg ?? ''));
       }
     }
     return Left(NetworkFailure());
@@ -62,7 +63,7 @@ class PropertyRepository {
             await _propertyRemoteDataSource.uploadProp(p, update: update);
         return Right(prop);
       } catch (e) {
-        return Left(ServerFailure(e.toString()));
+        return Left(ServerFailure((e as ServerException).msg ?? ''));
       }
     }
     return Left(NetworkFailure());
