@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:dufuna/core/model/property.dart';
+import 'package:dufuna/core/model/property_filter.dart';
 import 'package:dufuna/core/util/async_value.dart';
 import 'package:dufuna/repository/property_repository.dart';
 import 'package:flutter/foundation.dart';
@@ -45,10 +46,10 @@ class PropertyProvider with ChangeNotifier {
   }
 
   Future<Either<String, Unit>> uploadProp(Property property,
-      [bool isEdit = false, List<File> images = const []]) async {
+      [bool update = false, List<File> images = const []]) async {
     List<PropertyImg> uploadedImgs = [];
 
-    if (!isEdit) {
+    if (!update) {
       asyncValueOfUpload = AsyncValue.loading('Processing images...');
 
       for (var image in images) {
@@ -60,12 +61,12 @@ class PropertyProvider with ChangeNotifier {
     }
 
     asyncValueOfUpload = AsyncValue.loading(
-        isEdit ? 'Updating property...' : 'Listing property...');
+        update ? 'Updating property...' : 'Listing property...');
     final failureOrProp = await _propertyRepository.uploadProp(
-      images.isEmpty || isEdit
+      images.isEmpty || update
           ? property
           : property.copyWith(images: uploadedImgs),
-      update: isEdit,
+      update: update,
     );
     asyncValueOfUpload = null;
     return failureOrProp.fold(
@@ -73,7 +74,7 @@ class PropertyProvider with ChangeNotifier {
         return Left(failure.msg);
       },
       (prop) {
-        if (isEdit) {
+        if (update) {
           asyncValueOfProps = AsyncValue.done(asyncValueOfProps.data!.map((e) {
             if (e == prop) return prop;
             return e;
@@ -85,5 +86,20 @@ class PropertyProvider with ChangeNotifier {
         return const Right(unit);
       },
     );
+  }
+
+  PropertyFilter _propertyFilter = PropertyFilter();
+
+  PropertyFilter get propertyFilter => _propertyFilter;
+  set propertyFilter(PropertyFilter value) {
+    _propertyFilter = value;
+    notifyListeners();
+  }
+
+  void applyFilter(PropertyFilter filter) {
+    if (filter != propertyFilter) {
+      propertyFilter = filter;
+      getProps(propertyFilter.getFilters());
+    }
   }
 }

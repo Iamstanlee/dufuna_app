@@ -18,7 +18,7 @@ class Http {
     try {
       final response = await _dio
           .get(endpoint, queryParameters: params)
-          .timeout(const Duration(seconds: 12));
+          .timeout(const Duration(seconds: 16));
       if (response.statusCode == HttpStatus.ok) {
         return response.data;
       }

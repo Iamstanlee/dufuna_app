@@ -3,6 +3,7 @@ import 'package:dufuna/config/theme.dart';
 import 'package:dufuna/core/util/extension.dart';
 import 'package:dufuna/core/widget/state.dart';
 import 'package:dufuna/presentation/provider/property_provider.dart';
+import 'package:dufuna/presentation/screen/home/filter.dart';
 import 'package:dufuna/presentation/screen/home/property_item.dart';
 import 'package:dufuna/presentation/screen/property/add_or_edit_property.dart';
 import 'package:dufuna/presentation/screen/property/property_info.dart';
@@ -33,8 +34,12 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           IconButton(
-              onPressed: () {},
-              icon: Icon(PhosphorIcons.funnel, color: AppColors.kDark))
+            onPressed: () => context.push(const FilterPage()),
+            icon: Icon(
+              PhosphorIcons.funnel,
+              color: AppColors.kDark,
+            ),
+          )
         ],
       ),
       body: asyncValueOfProps.when(
