@@ -1,3 +1,4 @@
+import 'package:dufuna/config/constants.dart';
 import 'package:flutter/material.dart';
 
 extension StringX on String {
@@ -36,6 +37,15 @@ extension ContextX on BuildContext {
       Navigator.push<T>(this, MaterialPageRoute(builder: (context) => page));
 
   Future<bool> pop<T>([T? result]) => Navigator.maybePop(this, result);
+
+  void showSnack(String msg, [Color? color]) {
+    ScaffoldMessenger.of(this).showSnackBar(
+      SnackBar(
+        content: Text(msg),
+        backgroundColor: color ?? AppColors.kError,
+      ),
+    );
+  }
 }
 
 extension ClickableX on Widget {

@@ -187,6 +187,18 @@ class Property {
     );
   }
 
+  Map<String, dynamic> getUpdateFields() {
+    return {
+      'bedroom': bedRoom,
+      'kitchen': kitchen,
+      'sittingRoom': sittingRoom,
+      'bathroom': bathRoom,
+      'toilet': toilet,
+      'description': desc,
+      'validTo': validTo,
+    };
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'address': address,

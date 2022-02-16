@@ -10,6 +10,7 @@ Real estate listing app
     <img src="https://raw.githubusercontent.com/Iamstanlee/dufuna_app/main/screenshots/s3.png" width="200px" height="auto" hspace="10"/>
     <img src="https://raw.githubusercontent.com/Iamstanlee/dufuna_app/main/screenshots/s4.png" width="200px" height="auto" hspace="10"/>
 </p>
+
 ## Run Locally
 
 Clone the project

@@ -245,9 +245,14 @@ class _AddOrEditPropertyPageState extends State<AddOrEditPropertyPage> {
                         });
                       }, (_) async {
                         if (images.isEmpty && !isEdit) {
-                          setState(() {
-                            formIsDirty = true;
-                          });
+                          context.showSnack(
+                            'Add atleast one image of this property',
+                          );
+                        } else if (validTo.isBefore(validFrom) ||
+                            validFrom.difference(DateTime.now()).inDays == 0) {
+                          context.showSnack(
+                            '"Valid from" date must be greater than today and "Valid to" date must be greater than "Valid from"',
+                          );
                         } else {
                           setState(() {
                             formIsDirty = false;
@@ -272,20 +277,17 @@ class _AddOrEditPropertyPageState extends State<AddOrEditPropertyPage> {
                               );
 
                           failureOrSuccess.fold(
-                              (failure) =>
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(failure),
-                                      backgroundColor: AppColors.kError,
-                                    ),
+                              (failure) => context.showSnack(
+                                    failure,
+                                    AppColors.kError,
                                   ), (_) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content:
-                                    const Text('Property listed successfully'),
-                                backgroundColor: AppColors.kPrimary,
-                              ),
+                            context.showSnack(
+                              isEdit
+                                  ? 'Property updated successfully'
+                                  : 'Property listed successfully',
+                              AppColors.kPrimary,
                             );
+
                             context.pop();
                           });
                         }
